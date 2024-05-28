@@ -2,6 +2,38 @@ import "./App.css";
 
 function App() {
   const StartPosting = async () => {
+    const GiminiAPIKey = "AIzaSyB1kD08Y6OBFPlRBRu8InIMi8kfXOQpqAg";
+
+    try {
+      const GeneratePrompt = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GiminiAPIKey}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: "Explain how AI works" }] }],
+          }),
+        }
+      );
+
+      // Check if the response is successful (status code 200)
+      if (GeneratePrompt.ok) {
+        // Extract JSON data from the response
+        const responseData = await GeneratePrompt.json();
+        console.log("Response data from Gimini", responseData?.candidates[0]?.content?.parts[0]?.text);
+      } else {
+        // If the response is not successful, throw an error
+        throw new Error("Failed to fetch data from Gimini API");
+      }
+
+      // const ResponseDataFromGimini = GeneratePrompt.candidates;
+      // console.log("Response data from gimini", ResponseDataFromGimini);
+    } catch (error) {
+      console.log(error);
+    }
+
     console.log("Starting Posting");
 
     const PageId = 100353242098913;
