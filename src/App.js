@@ -87,12 +87,12 @@ function App() {
       console.log(error);
     }
 
-    // const PageId = 1335248174098573;
+    const PageId = 348070485049627;
     const AccessToken = process.env.REACT_APP_ACCESS_TOKEN;
 
     try {
       const response = await fetch(
-        `https://graph.facebook.com/v20.0/me/feed`,
+        `https://graph.facebook.com/v20.0/${PageId}/feed`,
         {
           method: "POST",
           headers: {
@@ -123,10 +123,11 @@ function App() {
       }, i * 10000); // Delay each call by i * 10000 milliseconds
     }
   };
+  StartLoop();
 
   return (
     <div>
-      <button onClick={StartLoop}>Starting Posting</button>
+      <p>Started Posting, To terminate the loop close the broswer tab</p>
     </div>
   );
 }
