@@ -120,7 +120,7 @@ function App() {
       setTimeout(() => {
         StartPosting();
         console.log("Calling again");
-      }, i * 10000); // Delay each call by i * 10000 milliseconds
+      }, i * 3600000); // Delay each call by i * 10000 milliseconds
     }
   };
   StartLoop();
