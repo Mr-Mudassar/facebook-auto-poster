@@ -1,8 +1,55 @@
 import "./App.css";
 
 function App() {
+  const famousPersonalitiesWithQuotes = [
+    "Albert Einstein",
+    "Mahatma Gandhi",
+    "Martin Luther King Jr.",
+    "Nelson Mandela",
+    "Winston Churchill",
+    "Marie Curie",
+    "Isaac Newton",
+    "Leonardo da Vinci",
+    "Abraham Lincoln",
+    "Steve Jobs",
+    "Oprah Winfrey",
+    "Mark Twain",
+    "William Shakespeare",
+    "Mother Teresa",
+    "Helen Keller",
+    "Thomas Edison",
+    "Rosa Parks",
+    "Malala Yousafzai",
+    "Elon Musk",
+    "Imam Ali (AS)",
+    "Dr Zakir Naik",
+    "Rumi",
+    "Ibn Sina (Avicenna)",
+    "Al-Khwarizmi",
+    "Ibn Battuta",
+    "Jalaluddin Rumi",
+    "Ibn Rushd (Averroes)",
+    "Al-Farabi",
+    "Saladin",
+    "Muhammad Iqbal",
+    "Suleiman the Magnificent",
+    "Nur Jahan",
+    "Malcolm X",
+    "Muhammad Ali",
+    "Yusuf Islam (Cat Stevens)",
+    "Mufti Menk",
+    "Tariq Ramadan",
+  ];
+
   const StartPosting = async () => {
-    const GiminiAPIKey = "AIzaSyB1kD08Y6OBFPlRBRu8InIMi8kfXOQpqAg";
+    const GiminiAPIKey = process.env.REACT_APP_GIMINI_API_KEY;
+    var ResponseFromAPI;
+    const randomPersonality =
+      famousPersonalitiesWithQuotes[
+        Math.floor(Math.random() * famousPersonalitiesWithQuotes.length)
+      ];
+    // console.log(Math.floor(Math.random() * famousPersonalitiesWithQuotes.length))
+    // console.log(randomPersonality, "random personality")
 
     try {
       const GeneratePrompt = await fetch(
@@ -13,7 +60,15 @@ function App() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            contents: [{ parts: [{ text: "Explain how AI works" }] }],
+            contents: [
+              {
+                parts: [
+                  {
+                    text: `Generate a very short quote from personality ${randomPersonality}. The quote should be fully optimized, unique, human-readable, and in English only, including emojis and hashtags at the start of the quote. The author's name should be at the end of the quote. The text should not include any HTML tags.`,
+                  },
+                ],
+              },
+            ],
           }),
         }
       );
@@ -22,27 +77,22 @@ function App() {
       if (GeneratePrompt.ok) {
         // Extract JSON data from the response
         const responseData = await GeneratePrompt.json();
-        console.log("Response data from Gimini", responseData?.candidates[0]?.content?.parts[0]?.text);
+        ResponseFromAPI = responseData?.candidates[0]?.content?.parts[0]?.text;
+        console.log("Response data from Gimini", ResponseFromAPI);
       } else {
         // If the response is not successful, throw an error
         throw new Error("Failed to fetch data from Gimini API");
       }
-
-      // const ResponseDataFromGimini = GeneratePrompt.candidates;
-      // console.log("Response data from gimini", ResponseDataFromGimini);
     } catch (error) {
       console.log(error);
     }
 
-    console.log("Starting Posting");
-
-    const PageId = 100353242098913;
+    // const PageId = 1335248174098573;
     const AccessToken = process.env.REACT_APP_ACCESS_TOKEN;
-    console.log(AccessToken);
 
     try {
       const response = await fetch(
-        `https://graph.facebook.com/v20.0/${PageId}/feed`,
+        `https://graph.facebook.com/v20.0/me/feed`,
         {
           method: "POST",
           headers: {
@@ -50,7 +100,7 @@ function App() {
             Authorization: "Bearer " + AccessToken,
           },
           body: JSON.stringify({
-            message: "Hello World",
+            message: ResponseFromAPI,
           }),
         }
       );
@@ -59,17 +109,24 @@ function App() {
         throw new Error("Network response was not ok");
       }
 
-      const data = await response.json();
-      console.log(data, "response from API");
+      console.log(response.data);
     } catch (error) {
       console.error("There was an error!", error);
     }
   };
 
+  const StartLoop = () => {
+    for (let i = 0; i < 100; i++) {
+      setTimeout(() => {
+        StartPosting();
+        console.log("Calling again");
+      }, i * 10000); // Delay each call by i * 10000 milliseconds
+    }
+  };
+
   return (
     <div>
-      <button onClick={StartPosting}>Starting Posting</button>
-      {/* <button onClick={"StopPosting"}>Stop Posting</button> */}
+      <button onClick={StartLoop}>Starting Posting</button>
     </div>
   );
 }
