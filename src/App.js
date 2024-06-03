@@ -125,7 +125,7 @@ function App() {
 
   return (
     <div>
-      <p>Started Posting, To terminate the loop close the broswer tab</p>
+      <p>Started Posting, To terminate the loop close the broswer tab. V-2.0</p>
     </div>
   );
 }
