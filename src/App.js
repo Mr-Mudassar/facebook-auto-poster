@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import "./App.css";
 
 function App() {
@@ -42,6 +43,7 @@ function App() {
   ];
 
   const StartPosting = async () => {
+    console.log("Posting started")
     const GiminiAPIKey = process.env.REACT_APP_GIMINI_API_KEY;
     var ResponseFromAPI;
     const randomPersonality =
@@ -115,15 +117,11 @@ function App() {
     }
   };
 
-  const StartLoop = () => {
-    for (let i = 0; i < 100; i++) {
-      setTimeout(() => {
-        StartPosting();
-        console.log("Calling again");
-      }, i * 3600000); // Delay each call by i * 10000 milliseconds
-    }
-  };
-  StartLoop();
+  useEffect(() => {
+    StartPosting();
+    const StartLoop = setInterval(StartPosting, 3 * 60 * 60 * 1000);
+    return () => clearInterval(StartLoop);
+  }, []);
 
   return (
     <div>
